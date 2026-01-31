@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Brainrot Clicker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Top Resources -->
+    <div class="top-resources">
+        <div class="resource">
+            <span class="resource-icon" data-type="coin">💰</span>
+            <span id="coins">0</span>
+        </div>
+        <div class="resource">
+            <span class="resource-icon" data-type="gem">💎</span>
+            <span id="gems">0</span>
+        </div>
+        <div class="resource">
+            <span class="resource-icon" data-type="star">⭐</span>
+            <span id="prestige">0</span>
+        </div>
+        <button class="resource" id="prestigeBtn" style="background: linear-gradient(135deg, #888, #666); cursor: pointer;" title="Prestige available at level 10">
+            <span class="resource-icon" data-type="star">⭐</span> Prestige
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Pages -->
+        <div class="pages">
+            <!-- Achievements Page -->
+            <div class="page achievements-page" data-page="achievements">
+                <div class="page-header">
+                    <h2><i class="fas fa-trophy"></i> Achievements</h2>
+                </div>
+                <div class="achievements-list" id="achievementsList">
+                    <!-- Will be filled by JS -->
+                </div>
+            </div>
+
+            <!-- Inventory Page -->
+            <div class="page inventory-page" data-page="inventory">
+                <div class="page-header">
+                    <h2><i class="fas fa-backpack"></i> Inventory</h2>
+                </div>
+                
+                <!-- Player Stats -->
+                <div class="player-stats">
+                    <div class="stat-row">
+                        <div class="stat">
+                            <span class="stat-icon">⚔️</span>
+                            <div class="stat-info">
+                                <span class="stat-label">Damage</span>
+                                <span id="statDamage" class="stat-value">10</span>
+                            </div>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">⚡</span>
+                            <div class="stat-info">
+                                <span class="stat-label">Auto/s</span>
+                                <span id="statAuto" class="stat-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat">
+                            <span class="stat-icon">🎯</span>
+                            <div class="stat-info">
+                                <span class="stat-label">Crit</span>
+                                <span id="statCrit" class="stat-value">5%</span>
+                            </div>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">✨</span>
+                            <div class="stat-info">
+                                <span class="stat-label">Multi</span>
+                                <span id="statMulti" class="stat-value">1.0x</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Pet -->
+                <div class="active-section">
+                    <h3><i class="fas fa-paw"></i> Active Pet</h3>
+                    <div class="active-pet" id="activePet">
+                        <div class="no-pet">No pet equipped</div>
+                    </div>
+                </div>
+
+                <!-- Items Grid -->
+                <div class="items-section">
+                    <h3><i class="fas fa-cubes"></i> Items</h3>
+                    <div class="items-grid" id="itemsGrid">
+                        <!-- Will be filled by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fight Page (Center/Default) -->
+            <div class="page fight-page active" data-page="fight">
+                <!-- Island Container -->
+                <div class="island-container" id="islandContainer">
+                    <!-- Island Background -->
+                    <div class="island-bg" id="islandBg">
+                        <!-- Background image will be set by JS -->
+                    </div>
+                    
+                    <!-- Island -->
+                    <div class="island" id="island">
+                        <!-- Enemy -->
+                        <div class="enemy" id="enemy" onclick="attack()" ontouchstart="attack()">
+                            <img class="enemy-image" id="enemyImage" src="" alt="Enemy">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enemy Info -->
+                <div class="enemy-info">
+                    <div class="enemy-hp-container">
+                        <div class="enemy-hp-bar">
+                            <div class="enemy-hp-fill" id="enemyHpFill"></div>
+                        </div>
+                        <div class="enemy-hp-text" id="enemyHpText">100%</div>
+                    </div>
+                    <div class="enemy-details">
+                        <span class="enemy-type" id="enemyType">Grass</span>
+                        <span class="enemy-count" id="enemyCount">1/9</span>
+                    </div>
+                    <div class="difficulty-indicator">
+                        <span class="difficulty-text" id="difficultyText">Level 1 - Easy</span>
+                    </div>
+                </div>
+
+                <!-- Boss Timer -->
+                <div class="boss-timer-container" id="bossTimerContainer">
+                    <div class="boss-timer">
+                        <span class="boss-icon">👹</span>
+                        <span class="boss-text">Boss:</span>
+                        <span class="boss-time" id="bossTimer">60s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shop Page -->
+            <div class="page shop-page" data-page="shop">
+                <div class="page-header">
+                    <h2><i class="fas fa-shopping-cart"></i> Shop</h2>
+                </div>
+
+                <!-- Coin Purchases -->
+                <div class="shop-section">
+                    <h3><i class="fas fa-coins"></i> Buy Coins</h3>
+                    <div class="purchase-options">
+                        <div class="purchase-option">
+                            <div class="purchase-info">
+                                <span class="purchase-amount">100 Coins</span>
+                                <span class="purchase-bonus">No bonus</span>
+                            </div>
+                            <button class="purchase-btn" onclick="buyCoins(100, 1)">
+                                <span class="price">1</span>
+                                <span class="currency">💎</span>
+                            </button>
+                        </div>
+                        <div class="purchase-option">
+                            <div class="purchase-info">
+                                <span class="purchase-amount">550 Coins</span>
+                                <span class="purchase-bonus">+10% bonus</span>
+                            </div>
+                            <button class="purchase-btn" onclick="buyCoins(550, 5)">
+                                <span class="price">5</span>
+                                <span class="currency">💎</span>
+                            </button>
+                        </div>
+                        <div class="purchase-option">
+                            <div class="purchase-info">
+                                <span class="purchase-amount">1,200 Coins</span>
+                                <span class="purchase-bonus">+20% bonus</span>
+                            </div>
+                            <button class="purchase-btn" onclick="buyCoins(1200, 10)">
+                                <span class="price">10</span>
+                                <span class="currency">💎</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permanent Upgrades -->
+                <div class="shop-section">
+                    <h3><i class="fas fa-arrow-up"></i> Permanent Upgrades</h3>
+                    <div class="upgrade-options">
+                        <div class="upgrade-option">
+                            <div class="upgrade-info">
+                                <span class="upgrade-name">Damage +2</span>
+                                <span class="upgrade-desc">Permanent damage increase</span>
+                                <div class="upgrade-stats">
+                                    <span>Current: <span id="currentDamage">10</span></span>
+                                    <span>Cost: <span class="upgrade-cost" id="damageCost">100</span> 💰</span>
+                                </div>
+                            </div>
+                            <button class="upgrade-btn" onclick="buyDamageUpgrade()">
+                                Buy
+                            </button>
+                        </div>
+                        
+                        <div class="upgrade-option">
+                            <div class="upgrade-info">
+                                <span class="upgrade-name">Crit Chance +1%</span>
+                                <span class="upgrade-desc">Permanent crit chance</span>
+                                <div class="upgrade-stats">
+                                    <span>Current: <span id="currentCrit">5</span>%</span>
+                                    <span>Cost: <span class="upgrade-cost" id="critCost">250</span> 💰</span>
+                                </div>
+                            </div>
+                            <button class="upgrade-btn" onclick="buyCritUpgrade()">
+                                Buy
+                            </button>
+                        </div>
+                        
+                        <div class="upgrade-option">
+                            <div class="upgrade-info">
+                                <span class="upgrade-name">Auto Damage +1</span>
+                                <span class="upgrade-desc">Permanent auto damage</span>
+                                <div class="upgrade-stats">
+                                    <span>Current: <span id="currentAuto">0</span>/s</span>
+                                    <span>Cost: <span class="upgrade-cost" id="autoCost">500</span> 💰</span>
+                                </div>
+                            </div>
+                            <button class="upgrade-btn" onclick="buyAutoUpgrade()">
+                                Buy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crates -->
+                <div class="shop-section">
+                    <h3><i class="fas fa-gift"></i> Crates</h3>
+                    <div class="crates-grid" id="cratesGrid">
+                        <!-- Will be filled by JS -->
+                    </div>
+                </div>
+
+                <!-- Prestige Section -->
+                <div class="shop-section prestige-info">
+                    <div class="prestige-header">
+                        <span class="prestige-icon">⭐</span>
+                        <span class="prestige-title">Prestige System</span>
+                    </div>
+                    
+                    <div class="prestige-multiplier" id="prestigeMultiplier">
+                        Global Multiplier: 1.0x
+                    </div>
+                    
+                    <div class="prestige-requirements" id="prestigeRequirements">
+                        Available at Level 10
+                    </div>
+                    
+                    <button class="prestige-btn" onclick="showPrestigeModal()" id="shopPrestigeBtn">
+                        PRESTIGE
+                    </button>
+                    
+                    <div style="margin-top: 15px; font-size: 11px; color: #666;">
+                        <strong>Prestige Benefits:</strong>
+                        • Keep all Permanent Upgrades<br>
+                        • Keep all Items & Pets<br>
+                        • Get Prestige Points<br>
+                        • Global Damage Multiplier<br>
+                        • Unlock Special Achievements
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quests Page -->
+            <div class="page quests-page" data-page="quests">
+                <div class="page-header">
+                    <h2><i class="fas fa-scroll"></i> Quests</h2>
+                </div>
+
+                <!-- Daily Quests -->
+                <div class="quests-section">
+                    <h3><i class="fas fa-calendar-day"></i> Daily Quests</h3>
+                    <div class="quests-list" id="dailyQuests">
+                        <!-- Will be filled by JS -->
+                    </div>
+                </div>
+
+                <!-- Weekly Quests -->
+                <div class="quests-section">
+                    <h3><i class="fas fa-calendar-week"></i> Weekly Quests</h3>
+                    <div class="quests-list" id="weeklyQuests">
+                        <!-- Will be filled by JS -->
+                    </div>
+                </div>
+
+                <!-- Special Quests -->
+                <div class="quests-section">
+                    <h3><i class="fas fa-star"></i> Special Quests</h3>
+                    <div class="quests-list" id="specialQuests">
+                        <!-- Will be filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-btn" data-page="achievements">
+            <i class="fas fa-trophy"></i>
+            <span class="nav-label">Achievements</span>
+        </button>
+        <button class="nav-btn" data-page="inventory">
+            <i class="fas fa-backpack"></i>
+            <span class="nav-label">Inventory</span>
+        </button>
+        <button class="nav-btn active" data-page="fight">
+            <i class="fas fa-crosshairs"></i>
+            <span class="nav-label">Fight</span>
+        </button>
+        <button class="nav-btn" data-page="shop">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="nav-label">Shop</span>
+        </button>
+        <button class="nav-btn" data-page="quests">
+            <i class="fas fa-scroll"></i>
+            <span class="nav-label">Quests</span>
+        </button>
+    </nav>
+
+    <!-- Simple Message Overlay -->
+    <div class="message-overlay" id="messageOverlay">
+        <div class="message-content">
+            <h3 id="messageTitle"></h3>
+            <p id="messageText"></p>
+            <button class="message-close" onclick="closeMessage()">OK</button>
+        </div>
+    </div>
+
+    <!-- Crate Opening Overlay -->
+    <div class="crate-overlay" id="crateOverlay">
+        <div class="crate-container">
+            <h3 id="crateTitle" style="color: white; margin-bottom: 20px;"></h3>
+            
+            <div class="crate-animation">
+                <div class="crate-items-scroll" id="crateItemsScroll">
+                    <!-- Items will be added here -->
+                </div>
+            </div>
+            
+            <div class="crate-result" id="crateResult">
+                <div id="resultIcon" style="font-size: 60px; margin-bottom: 10px;"></div>
+                <h4 id="resultName" style="color: white; margin-bottom: 10px;"></h4>
+                <div id="resultRarity" class="rarity-badge"></div>
+                <div id="resultDescription" style="color: #ccc; font-size: 14px; margin-top: 10px;"></div>
+            </div>
+            
+            <div class="crate-buttons">
+                <button class="open-crate-btn" id="openCrateBtn">OPEN</button>
+                <button class="skip-crate-btn" id="skipCrateBtn">SKIP</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
