@@ -1,5 +1,5 @@
 // ======================================================
-// GAME STATE & DATA - MED NYE BILDER
+// GAME STATE & DATA - MED NYE BILDER OG FIENDER
 // ======================================================
 
 let gameState = {
@@ -39,7 +39,7 @@ let gameState = {
 // DINE BILDE-URL-ER FOR GITHUB PAGES
 const baseURL = 'https://raw.githubusercontent.com/haakoneieland/Brainrot-clicker/main/';
 
-// Bakgrunnsbilder for øyer (500x800 px) - NYE BAKGRUNNSBILDER
+// Bakgrunnsbilder for biomer (dekker hele skjermen) - NYE NAVN
 const backgroundImages = {
     grass: baseURL + 'Bakgrunn1.png.PNG',
     desert: baseURL + 'Bakgrunn2.png.PNG',
@@ -53,33 +53,36 @@ const backgroundImages = {
     void: baseURL + 'Bakgrunn10.png.PNG'
 };
 
-// Fiende-bilder - NYE ØYER
+// Fiende-bilder - NYE NAVN: fiende1a.PNG, fiende2a.PNG osv.
 const enemyImages = {
-    grass: baseURL + '%C3%98y1.png.PNG',
-    desert: baseURL + '%C3%98y2.png.PNG',
-    snow: baseURL + '%C3%98y3.png.PNG',
-    lava: baseURL + '%C3%98y4.png.PNG',
-    swamp: baseURL + '%C3%98y5.png.PNG',
-    ocean: baseURL + '%C3%98y6.png.PNG',
-    jungle: baseURL + '%C3%98y7.png.PNG',
-    mountain: baseURL + '%C3%98y8.png.PNG',
-    ruins: baseURL + '%C3%98y9.png.PNG',
-    void: baseURL + '%C3%98y10.png.PNG'
+    grass: baseURL + 'fiende1a.PNG',
+    desert: baseURL + 'fiende2a.PNG',
+    snow: baseURL + 'fiende3a.PNG',
+    lava: baseURL + 'fiende4a.PNG',
+    swamp: baseURL + 'fiende5a.PNG',
+    ocean: baseURL + 'fiende6a.PNG',
+    jungle: baseURL + 'fiende7a.PNG',
+    mountain: baseURL + 'fiende8a.PNG',
+    ruins: baseURL + 'fiende9a.PNG',
+    void: baseURL + 'fiende10a.PNG'
 };
 
-// Boss-bilder - NYE ØYER med 'b'
+// Boss-bilder - NYE NAVN: fiende1b.PNG, fiende2b.PNG osv.
 const bossImages = {
-    grass: baseURL + '%C3%98y1b.png.PNG',
-    desert: baseURL + '%C3%98y2b.png.PNG',
-    snow: baseURL + '%C3%98y3b.png.PNG',
-    lava: baseURL + '%C3%98y4b.png.PNG',
-    swamp: baseURL + '%C3%98y5b.png.PNG',
-    ocean: baseURL + '%C3%98y6b.png.PNG',
-    jungle: baseURL + '%C3%98y7b.png.PNG',
-    mountain: baseURL + '%C3%98y8b.png.PNG',
-    ruins: baseURL + '%C3%98y9b.png.PNG',
-    void: baseURL + '%C3%98y10b.png.PNG'
+    grass: baseURL + 'fiende1b.PNG',
+    desert: baseURL + 'fiende2b.PNG',
+    snow: baseURL + 'fiende3b.PNG',
+    lava: baseURL + 'fiende4b.PNG',
+    swamp: baseURL + 'fiende5b.PNG',
+    ocean: baseURL + 'fiende6b.PNG',
+    jungle: baseURL + 'fiende7b.PNG',
+    mountain: baseURL + 'fiende8b.PNG',
+    ruins: baseURL + 'fiende9b.PNG',
+    void: baseURL + 'fiende10b.PNG'
 };
+
+// Boss ikon - Legger til boss.png over bossene
+const bossIcon = baseURL + 'boss.png';
 
 // UI Ikoner - NYE BILDER
 const uiIcons = {
@@ -496,7 +499,7 @@ const quests = {
     ]
 };
 
-// Biome System - OPPDATERET MED NYE BAKGRUNNSBILDER
+// Biome System
 const biomes = [
     { 
         name: 'grass', 
@@ -709,7 +712,7 @@ function navigateToPage(page) {
 }
 
 // ======================================================
-// COMBAT SYSTEM - OPPDATERET FOR ØYER OG NY DAMAGE BEREGNING
+// COMBAT SYSTEM - OPPDATERET FOR NYE FIENDER
 // ======================================================
 
 function calculateDamage() {
@@ -963,39 +966,50 @@ function spawnEnemy() {
     const biomeIndex = (gameState.level - 1) % biomes.length;
     const biome = biomes[biomeIndex];
     
-    // Update island background - NY KODE FOR BAKGRUNNSBILDE
-    const islandBg = document.getElementById('islandBg');
-    if (islandBg) {
-        // Bruk CSS background-image i stedet for <img> element
-        islandBg.style.backgroundImage = `url('${biome.bgImage}')`;
-        islandBg.style.backgroundSize = 'cover';
-        islandBg.style.backgroundPosition = 'center';
-        islandBg.style.backgroundRepeat = 'no-repeat';
+    // Update background - dekker hele skjermen
+    const backgroundContainer = document.querySelector('.fight-page');
+    if (backgroundContainer) {
+        backgroundContainer.style.backgroundImage = `url('${biome.bgImage}')`;
+        backgroundContainer.style.backgroundSize = 'cover';
+        backgroundContainer.style.backgroundPosition = 'center';
+        backgroundContainer.style.backgroundRepeat = 'no-repeat';
     }
     
-    // Update island - TRANSPARENT
-    const island = document.getElementById('island');
-    if (island) {
-        island.className = 'island ' + biome.name;
-        // Fjern gradient og bruk transparent
-        island.style.background = 'transparent';
-    }
-    
-    // Update enemy - NYE ØY-BILDER
+    // Update enemy - NYE FIENDE BILDER
     gameState.currentBiome = biome.name;
     const enemyImage = document.getElementById('enemyImage');
-    if (enemyImage) {
+    const enemy = document.getElementById('enemy');
+    const bossIconElement = document.getElementById('bossIcon');
+    
+    if (enemyImage && enemy) {
         const isBoss = gameState.enemyNumber === 9;
         
         if (isBoss) {
-            // Bruk boss øy bilde
+            // Bruk boss fiende bilde
             enemyImage.src = bossImages[biome.name] || enemyImages[biome.name];
-            enemyImage.alt = `${biome.enemyType} Boss Island`;
+            enemyImage.alt = `${biome.enemyType} Boss`;
             
-            // Legg til boss klasse
-            const enemy = document.getElementById('enemy');
-            if (enemy) {
-                enemy.classList.add('boss-indicator', 'boss-enhanced');
+            // Legg til boss klasse og ikon
+            enemy.classList.add('boss-indicator', 'boss-enhanced');
+            
+            // Opprett boss ikon hvis den ikke finnes
+            if (!bossIconElement) {
+                const bossIconImg = document.createElement('img');
+                bossIconImg.id = 'bossIcon';
+                bossIconImg.src = bossIcon;
+                bossIconImg.style.cssText = `
+                    position: absolute;
+                    top: -20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 60px;
+                    height: 60px;
+                    z-index: 1001;
+                    pointer-events: none;
+                    filter: drop-shadow(0 0 10px red);
+                    animation: float 2s infinite ease-in-out;
+                `;
+                enemy.appendChild(bossIconImg);
             }
             
             gameState.bossTimer = 60;
@@ -1003,14 +1017,14 @@ function spawnEnemy() {
             if (bossTimerContainer) bossTimerContainer.style.display = 'flex';
             startBossTimer();
         } else {
-            // Bruk vanlig øy bilde
+            // Bruk vanlig fiende bilde
             enemyImage.src = enemyImages[biome.name];
-            enemyImage.alt = `${biome.enemyType} Island`;
+            enemyImage.alt = `${biome.enemyType} Enemy`;
             
-            // Fjern boss klasse
-            const enemy = document.getElementById('enemy');
-            if (enemy) {
-                enemy.classList.remove('boss-indicator', 'boss-enhanced');
+            // Fjern boss klasse og ikon
+            enemy.classList.remove('boss-indicator', 'boss-enhanced');
+            if (bossIconElement) {
+                bossIconElement.remove();
             }
             
             const bossTimerContainer = document.getElementById('bossTimerContainer');
@@ -1020,6 +1034,12 @@ function spawnEnemy() {
                 gameState.bossTimerInterval = null;
             }
         }
+        
+        // Øk størrelsen på fienden
+        enemy.style.width = '250px';
+        enemy.style.height = '250px';
+        enemyImage.style.width = '100%';
+        enemyImage.style.height = '100%';
     }
     
     const enemyTypeEl = document.getElementById('enemyType');
@@ -1598,7 +1618,7 @@ function updatePrestigeButton() {
 }
 
 // ======================================================
-// INVENTORY SYSTEM
+// INVENTORY SYSTEM - MED STØRRE ITEM BILDER
 // ======================================================
 
 function addItemToInventory(item) {
@@ -1722,9 +1742,11 @@ function renderInventory() {
                 `<div class="item-required">Need ${itemData.level + 1 - itemData.count} more</div>`;
         }
         
+        // Legg til klikk-event for å vise større bilde
         div.innerHTML = `
             <div class="item-count">${itemData.count}/${itemData.level + 1}</div>
-            <img src="${item.icon}" class="item-icon" style="width:32px;height:32px;">
+            <img src="${item.icon}" class="item-icon" style="width:64px;height:64px;cursor:pointer;" 
+                 onclick="showItemModal('${item.id}', '${category}')">
             <div class="item-name">${item.name}</div>
             <div class="item-level">Level ${itemData.level}</div>
             <div class="item-rarity ${item.rarity}">${item.rarity.toUpperCase()}</div>
@@ -1733,6 +1755,84 @@ function renderInventory() {
         `;
         itemsGrid.appendChild(div);
     });
+}
+
+function showItemModal(itemId, category) {
+    const itemData = inventory[category]?.[itemId];
+    if (!itemData) return;
+    
+    const item = itemData.item;
+    
+    // Opprett modal for større bilde
+    const modalHTML = `
+        <div class="item-modal-overlay">
+            <div class="item-modal-content">
+                <img src="${item.icon}" style="width:128px;height:128px;margin-bottom:15px;">
+                <h3 style="color:#333;margin-bottom:10px;">${item.name}</h3>
+                <div class="item-rarity ${item.rarity}" style="margin-bottom:15px;">${item.rarity.toUpperCase()}</div>
+                <div style="text-align:left;margin-bottom:15px;">
+                    ${item.damage ? `<div style="margin-bottom:5px;"><strong>Damage:</strong> ${item.damage}x</div>` : ''}
+                    ${item.defense ? `<div style="margin-bottom:5px;"><strong>Defense:</strong> ${item.defense}x</div>` : ''}
+                    ${item.bonus ? Object.entries(item.bonus).map(([key, value]) => 
+                        `<div style="margin-bottom:5px;"><strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> +${value}${key === 'coins' || key === 'gems' || key === 'damage' ? 'x' : '%'}</div>`
+                    ).join('') : ''}
+                    ${item.required ? `<div style="margin-bottom:5px;"><strong>Required for upgrade:</strong> ${item.required}</div>` : ''}
+                </div>
+                <div style="margin-bottom:15px;color:#666;">
+                    <strong>Level:</strong> ${itemData.level}<br>
+                    <strong>Count:</strong> ${itemData.count}/${itemData.level + 1}
+                </div>
+                <button onclick="closeItemModal()" style="background:linear-gradient(135deg, #667eea, #764ba2);color:white;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Legg til modal i dokumentet
+    const modalDiv = document.createElement('div');
+    modalDiv.innerHTML = modalHTML;
+    document.body.appendChild(modalDiv.firstChild);
+    
+    // Legg til CSS for modal
+    const style = document.createElement('style');
+    style.textContent = `
+        .item-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        .item-modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 300px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function closeItemModal() {
+    const modal = document.querySelector('.item-modal-overlay');
+    if (modal) {
+        modal.remove();
+    }
 }
 
 function equipPet(petId) {
@@ -1802,7 +1902,7 @@ function upgradeItem(itemId) {
         itemData.count -= required;
         itemData.level++;
         
-        // Apply upgrade effects - NY DAMAGE BEREGNING
+        // Apply upgrade effects
         const item = itemData.item;
         if (item.damage) {
             gameState.itemDamageMultiplier *= item.damage;
@@ -2147,21 +2247,6 @@ function formatNumber(num) {
     return Math.floor(num).toString();
 }
 
-function darkenColor(color, percent) {
-    const num = parseInt(color.replace("#", ""), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = (num >> 16) - amt;
-    const G = (num >> 8 & 0x00FF) - amt;
-    const B = (num & 0x0000FF) - amt;
-    
-    return "#" + (
-        0x1000000 +
-        (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
-        (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
-        (B < 255 ? (B < 1 ? 0 : B) : 255)
-    ).toString(16).slice(1);
-}
-
 function checkDailyReset() {
     const now = Date.now();
     const lastDaily = gameState.lastDailyCrate || 0;
@@ -2404,3 +2489,5 @@ window.equipPet = equipPet;
 window.showPrestigeModal = showPrestigeModal;
 window.closeMessage = closeMessage;
 window.showSimpleCrateOpening = showSimpleCrateOpening;
+window.showItemModal = showItemModal;
+window.closeItemModal = closeItemModal;
